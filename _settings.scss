@@ -42,34 +42,6 @@ $space: (
 
 // --------------------------------------------------------
 //
-//  Grid Settings
-//
-//  These variables are explained in greater detail in
-//  _mixins/_grids.scss. If you don't need the grids
-//  set $generate-grids to false.
-//
-// --------------------------------------------------------
-
-$generate-grids:     true;
-$gutter:             rem(24);
-$flexbox-fallback:   false;
-
-$use-silent-classes: false;
-$push:               false;
-$pull:               false;
-
-$grid-breakpoints: (
-    's'  query('s'),
-    'm'  query('m'),
-    'l'  query('l'),
-    'xl' query('xl')
-);
-
-$breakpoint-has-widths: ('s', 'm', 'l', 'xl');
-
-
-// --------------------------------------------------------
-//
 //  Border Radius
 //
 //  There is a function to return these values quickly.
