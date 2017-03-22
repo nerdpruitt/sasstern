@@ -1,0 +1,38 @@
+//
+//   @gradients
+// ---------------------------------------------------------
+//
+//  Modified from http://codepen.io/Hornebom/pen/epqmGx/
+//
+// ---------------------------------------------------------
+//
+//  Built upon the logic found in a ps file
+//  element has a solid background
+//  background is covered by a gradient of one color
+//  one can define the opacity of the two color stops + the gradient angle
+//
+//  $bgColor,       // background-color
+//  $angle,         // gradient angle
+//  $gradientColor, // gradient color
+//  $opacityStart,  // opacity at start > 1 - 0
+//  $opacityEnd     // opacity at end > 1 - 0
+//
+//  examples
+//
+//  @include gradient($purple-base, $mint-base);
+//
+//  @include gradient($purple-base, $mint-base, 0.8, 0.6, 180);
+//
+// ---------------------------------------------------------
+
+@mixin gradient($bg-color, $gradient-color, $opacity-start: 1, $opacity-end: 0, $angle: 0) {
+    background-color: $bg-color;
+    background-image: linear-gradient(
+        ($angle * 1deg),
+        rgba($gradient-color, $opacity-start),
+        rgba($gradient-color, $opacity-end)
+    );
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}

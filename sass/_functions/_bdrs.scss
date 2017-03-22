@@ -1,0 +1,11 @@
+//
+//   @bdrs
+// --------------------------------------------------------
+//
+//  Shortcut function to grab the map $border-radius.
+//
+// --------------------------------------------------------
+
+@function bdrs($b, $b-sublayer: 'base', $b-map: $border-radius) {
+    @return getMap($b, $b-sublayer, $b-map);
+}

@@ -1,0 +1,11 @@
+//
+//   @spacing
+// --------------------------------------------------------
+//
+//  Shortcut function to grab the map $spacing.
+//
+// --------------------------------------------------------
+
+@function space($s, $s-sublayer: 'base', $s-map: $spacing) {
+    @return getMap($s, $s-sublayer, $s-map);
+}

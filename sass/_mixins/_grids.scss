@@ -1,0 +1,479 @@
+//  Indebted to the following:
+// ---------------------------
+//  https://github.com/philipwalton/solved-by-flexbox
+//  https://github.com/guerillalabs/Sasspool
+//  https://github.com/inuitcss/inuitcss
+
+
+//  - Grid expands to fill its containing elements and columns expand to fill the grid
+//  - Column size changes with breakpoints (which includes stacking)
+//  - order options (including breakpoints)
+//  - By default, the number of columns defines the column width
+//  - Fixed width (auto width) and flex columns play well together
+//  - Vertical and horizontal alignment options (also avail by breakpoint?)
+//  - Easily set breakpoints and gutters, and generate classnames (from Sass standpoint)
+
+//  *
+//    `class="grid__item  one-whole  lap--one-half  desk--one-third  push--desk--one-third"`
+//  *
+//    `class="grid__item  one-quarter  palm--one-half  push--palm--one-half"`
+//  *
+//    `class="grid__item  palm--one-third  desk--five-twelfths"`
+//
+
+
+// /*------------------------------------*\
+//     $VARIABLES
+// \*------------------------------------*/
+
+// *
+//  * Set the spacing between your grid items.
+
+$gutter: 24px!default;
+
+
+// *
+//  * Would you like Sass’ silent classes, or regular CSS classes?
+
+$use-silent-classes: false!default;
+
+//
+//  Do you need a Flexbox fallback?
+$flexbox-fallback: false!default;
+$flexbox-fallback-class: unquote('.no-flexbox')!default; // like Modernizr
+
+// *
+//  * Define your breakpoints. The first value is the prefix that shall be used for
+//  * your classes (e.g. `.palm--one-half`), the second value is the media query
+//  * that the breakpoint fires at.
+
+$grid-breakpoints: (
+    's'  '(max-width: 480px)',
+    'm'  '(min-width: 481px) and (max-width: 1023px)',
+    'l'  '(max-width: 1023px)',
+    'xl' '(min-width: 1024px)'
+)!default;
+
+
+// *
+//  * Define which namespaced breakpoints you would like to generate for each of
+//  * widths, push and pull. This is handy if you only need pull on, say, desk, or
+//  * you only need a new width breakpoint at mobile sizes. It allows you to only
+//  * compile as much CSS as you need. All are turned on by default, but you can
+//  * add and remove breakpoints at will.
+//  *
+//  * Push and pull shall only be used if `$push` and/or `$pull` and `$responsive`
+//  * have been set to ‘true’.
+
+$breakpoint-has-widths: ('s', 'm', 'l', 'xl')!default;
+$breakpoint-has-push:   ('s', 'm', 'l', 'xl')!default;
+$breakpoint-has-pull:   ('s', 'm', 'l', 'xl')!default;
+
+
+// *
+//  * You do not need to edit anything from this line onward; csswizardry-grids is
+//  * good to go. Happy griddin’!
+
+$class-type: unquote('.');
+
+@if $use-silent-classes == true {
+    $class-type: unquote('%');
+}
+
+
+// /*------------------------------------*\
+//     $MIXINS
+// \*------------------------------------*/
+// *
+//  * These mixins are for the library to use only, you should not need to modify
+//  * them at all.
+//  *
+//  * Enclose a block of code with a media query as named in `$grid-breakpoints`.
+
+@mixin grid-media-query($media-query) {
+    $breakpoint-found: false;
+
+    @each $breakpoint in $grid-breakpoints {
+        $name: nth($breakpoint, 1);
+        $declaration: nth($breakpoint, 2);
+
+        @if $media-query == $name and $declaration{
+            $breakpoint-found: true;
+
+            @media #{$declaration} {
+                @content;
+            }
+        }
+    }
+
+    @if $breakpoint-found == false{
+        @warn "Breakpoint ‘#{$media-query}’ does not exist"
+    }
+}
+
+
+// *
+//  * Drop relative positioning into silent classes which can’t take advantage of
+//  * the `[class*="push--"]` and `[class*="pull--"]` selectors.
+
+@mixin silent-relative() {
+    @if $use-silent-classes == true{
+        position: relative;
+    }
+}
+
+
+// /*------------------------------------*\
+//     $GRID SETUP
+// \*------------------------------------*/
+// *
+//  * 1. Allow the grid system to be used on lists.
+//  * 2. Remove any margins and paddings that might affect the grid system.
+//  * 3. Apply a negative `margin-left` to negate the columns’ gutters.
+
+#{$class-type}grid {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;                // [1] */
+    margin: 0;                       // [2] */
+    margin-left: -$gutter;           // [3] */
+    padding: 0;                      // [2] */
+}
+
+@if $flexbox-fallback == true {
+    #{$flexbox-fallback-class} #{$class-type}grid {
+        letter-spacing: -.31em;
+    }
+}
+
+// Grid items automatically set to correct width
+#{$class-type}grid--auto {
+    > #{$class-type}grid__item {
+        flex: 1; // aka flex: 1 1 0%
+    }
+}
+
+// fill the rest of a row, can be mixed with fixed widths
+#{$class-type}grid__item--full {
+    flex: 1; // aka flex: 1 1 0%
+}
+
+
+#{$class-type}grid--edges {
+    justify-content: space-between;
+    margin-left: 0;
+
+    > #{$class-type}grid__item {
+        padding-left: 0;
+    }
+}
+
+#{$class-type}grid--equal {
+    justify-content: space-around;
+    margin-left: 0;
+
+    > #{$class-type}grid__item {
+        padding-left: 0;
+    }
+}
+
+
+// *
+//  * 1. Cause columns to stack side-by-side.
+//  * 2. Space columns apart.
+//  * 3. Align columns to the tops of each other.
+//  * 4. Full-width unless told to behave otherwise.
+//  * 5. Required to combine fluid widths and fixed gutters.
+
+#{$class-type}grid__item {
+    box-sizing: border-box;       // [5] */
+    padding-left: $gutter;
+    width: 100%;                  // [4]
+}
+
+@if $flexbox-fallback == true {
+    #{$flexbox-fallback-class} #{$class-type}grid__item {
+        // inline-block gross mckhacky fix
+        display: inline-block;        // [1] */
+        letter-spacing: normal;
+        word-spacing: normal;
+        vertical-align: top;          // [3] */
+    }
+}
+
+
+// *
+//  * Reversed grids allow you to structure your source in the opposite order to
+//  * how your rendered layout will appear. Extends `.grid`.
+
+#{$class-type}grid--rev {
+    flex-direction: row-reverse;
+}
+
+@if $flexbox-fallback == true {
+    #{$flexbox-fallback-class} #{$class-type}grid--rev {
+        direction: rtl;
+        text-align: left;
+
+        > #{$class-type}grid__item {
+            direction: ltr;
+            text-align: left;
+        }
+    }
+}
+
+
+@for $i from 1 through 12 {
+    #{$class-type}grid__item--#{$i} {
+        order: $i;
+    }
+}
+
+// *
+//  * Align the entire grid to the right. Extends `.grid`.
+
+@if $flexbox-fallback == true {
+    #{$flexbox-fallback-class} #{$class-type}grid--right {
+        text-align: right;
+
+        > #{$class-type}grid__item {
+            text-align: left;
+        }
+    }
+}
+
+
+// *
+//  * Centered grids align grid items centrally without needing to use push or pull
+//  * classes. Extends `.grid`.
+
+#{$class-type}grid--center {
+    justify-content: center;
+}
+
+@if $flexbox-fallback == true {
+    #{$flexbox-fallback-class} #{$class-type}grid--center {
+        text-align: center;
+
+        > #{$class-type}grid__item {
+            text-align: left;
+        }
+    }
+}
+
+
+// *
+//  * Align grid cells vertically (`.grid--middle` or `.grid--bottom`). Extends
+//  * `.grid`.
+
+#{$class-type}grid--middle {
+    align-items: center;
+}
+
+#{$class-type}grid--bottom {
+    align-items: flex-end;
+}
+
+@if $flexbox-fallback == true {
+    #{$flexbox-fallback-class} #{$class-type}grid--middle {
+
+        > #{$class-type}grid__item {
+            vertical-align: middle;
+        }
+    }
+
+    #{$flexbox-fallback-class} #{$class-type}grid--bottom {
+
+        > #{$class-type}grid__item {
+            vertical-align: bottom;
+        }
+    }
+}
+
+// *
+//  * Vertical align individual cell
+#{$class-type}grid__item--middle {
+    align-self: center;
+}
+
+#{$class-type}grid__item--bottom {
+    align-self: flex-end;
+}
+
+
+// *
+//  * Gutterless grids have all the properties of regular grids, minus any spacing.
+//  * Extends `.grid`.
+
+#{$class-type}grid--full {
+    margin-left: 0;
+
+    > #{$class-type}grid__item {
+        padding-left: 0;
+    }
+}
+
+
+// *
+//  * Create grids with narrower gutters. Extends `.grid`.
+
+#{$class-type}grid--narrow {
+    margin-left: -($gutter / 2);
+
+    > #{$class-type}grid__item {
+        padding-left: $gutter / 2;
+    }
+}
+
+
+// *
+//  * Create grids with wider gutters. Extends `.grid`.
+
+#{$class-type}grid--wide {
+    margin-left: -($gutter * 2);
+
+    > #{$class-type}grid__item {
+        padding-left: $gutter * 2;
+    }
+}
+
+
+// *
+// * grid__items have a margin on the bottom
+
+#{$class-type}grid--spaced {
+    > #{$class-type}grid__item {
+        margin-bottom: $gutter;
+    }
+}
+
+
+// ------------------------------------*\
+//     $WIDTHS
+// \*------------------------------------
+// /**
+//  * Create our width classes, prefixed by the specified namespace.
+//  */
+@mixin generate-width-classes($namespace:'') {
+
+
+    // *
+    //  * Whole
+
+    #{$class-type}#{$namespace}one-whole { flex-basis: 100%; max-width: 100%; }
+
+
+    // *
+    //  * Halves
+
+    #{$class-type}#{$namespace}one-half { flex-basis: 50%; max-width: 50%; }
+
+
+    // *
+    //  * Thirds
+
+    #{$class-type}#{$namespace}one-third  { flex-basis: 33.333%; max-width: 33.333%; }
+    #{$class-type}#{$namespace}two-thirds { flex-basis: 66.666%; max-width: 66.666%; }
+
+
+    // *
+    //  * Quarters
+
+    #{$class-type}#{$namespace}one-quarter    { flex-basis: 25%; max-width: 25%; }
+    #{$class-type}#{$namespace}two-quarters   { @extend #{$class-type}#{$namespace}one-half; }
+    #{$class-type}#{$namespace}three-quarters { flex-basis: 75%; max-width: 75%; }
+
+
+    // *
+    //  * Fifths
+
+    #{$class-type}#{$namespace}one-fifth    { flex-basis: 20%; max-width: 20%; }
+    #{$class-type}#{$namespace}two-fifths   { flex-basis: 40%; max-width: 40%; }
+    #{$class-type}#{$namespace}three-fifths { flex-basis: 60%; max-width: 60%; }
+    #{$class-type}#{$namespace}four-fifths  { flex-basis: 80%; max-width: 80%; }
+
+
+    // *
+    //  * Sixths
+
+    #{$class-type}#{$namespace}one-sixth    { flex-basis: 16.666%; max-width: 16.666%; }
+    #{$class-type}#{$namespace}two-sixths   { @extend #{$class-type}#{$namespace}one-third; }
+    #{$class-type}#{$namespace}three-sixths { @extend #{$class-type}#{$namespace}one-half; }
+    #{$class-type}#{$namespace}four-sixths  { @extend #{$class-type}#{$namespace}two-thirds; }
+    #{$class-type}#{$namespace}five-sixths  { flex-basis: 83.333%; max-width: 83.333%; }
+
+
+    // *
+    //  * Eighths
+
+    #{$class-type}#{$namespace}one-eighth    { flex-basis: 12.5%; max-width: 12.5%; }
+    #{$class-type}#{$namespace}two-eighths   { @extend #{$class-type}#{$namespace}one-quarter; }
+    #{$class-type}#{$namespace}three-eighths { flex-basis: 37.5%; max-width: 37.5%; }
+    #{$class-type}#{$namespace}four-eighths  { @extend #{$class-type}#{$namespace}one-half; }
+    #{$class-type}#{$namespace}five-eighths  { flex-basis: 62.5%; max-width: 62.5%; }
+    #{$class-type}#{$namespace}six-eighths   { @extend #{$class-type}#{$namespace}three-quarters; }
+    #{$class-type}#{$namespace}seven-eighths { flex-basis: 87.5%; max-width: 87.5%; }
+
+
+    //  *
+    //  * Ninths
+
+    #{$class-type}#{$namespace}one-ninth    { flex-basis: 11.111%; max-width: 11.111%; }
+    #{$class-type}#{$namespace}two-ninths   { flex-basis: 22.222%; max-width: 22.222%; }
+    #{$class-type}#{$namespace}three-ninths { @extend #{$class-type}#{$namespace}one-third; }
+    #{$class-type}#{$namespace}four-ninths  { flex-basis: 44.444%; max-width: 44.444%; }
+    #{$class-type}#{$namespace}five-ninths  { flex-basis: 55.555%; max-width: 55.555%; }
+    #{$class-type}#{$namespace}six-ninths   { @extend #{$class-type}#{$namespace}two-thirds; }
+    #{$class-type}#{$namespace}seven-ninths { flex-basis: 77.777%; max-width: 77.777%; }
+    #{$class-type}#{$namespace}eight-ninths { flex-basis: 88.888%; max-width: 88.888%; }
+
+
+    // *
+    //  * Tenths
+
+    #{$class-type}#{$namespace}one-tenth    { flex-basis: 10%; max-width: 10%; }
+    #{$class-type}#{$namespace}two-tenths   { @extend #{$class-type}#{$namespace}one-fifth; }
+    #{$class-type}#{$namespace}three-tenths { flex-basis: 30%; max-width: 30%; }
+    #{$class-type}#{$namespace}four-tenths  { @extend #{$class-type}#{$namespace}two-fifths; }
+    #{$class-type}#{$namespace}five-tenths  { @extend #{$class-type}#{$namespace}one-half; }
+    #{$class-type}#{$namespace}six-tenths   { @extend #{$class-type}#{$namespace}three-fifths; }
+    #{$class-type}#{$namespace}seven-tenths { flex-basis: 70%; max-width: 70%; }
+    #{$class-type}#{$namespace}eight-tenths { @extend #{$class-type}#{$namespace}four-fifths; }
+    #{$class-type}#{$namespace}nine-tenths  { flex-basis: 90%; max-width: 90%; }
+
+
+    // *
+    //  * Twelfths
+
+    #{$class-type}#{$namespace}one-twelfth     { flex-basis: 8.333%; max-width: 8.333%; }
+    #{$class-type}#{$namespace}two-twelfths    { @extend #{$class-type}#{$namespace}one-sixth; }
+    #{$class-type}#{$namespace}three-twelfths  { @extend #{$class-type}#{$namespace}one-quarter; }
+    #{$class-type}#{$namespace}four-twelfths   { @extend #{$class-type}#{$namespace}one-third; }
+    #{$class-type}#{$namespace}five-twelfths   { flex-basis: 41.666%; max-width: 41.666%; }
+    #{$class-type}#{$namespace}six-twelfths    { @extend #{$class-type}#{$namespace}one-half; }
+    #{$class-type}#{$namespace}seven-twelfths  { flex-basis: 58.333%; max-width: 58.333%; }
+    #{$class-type}#{$namespace}eight-twelfths  { @extend #{$class-type}#{$namespace}two-thirds; }
+    #{$class-type}#{$namespace}nine-twelfths   { @extend #{$class-type}#{$namespace}three-quarters; }
+    #{$class-type}#{$namespace}ten-twelfths    { @extend #{$class-type}#{$namespace}five-sixths; }
+    #{$class-type}#{$namespace}eleven-twelfths { flex-basis: 91.666%; max-width: 91.666%; }
+
+}
+
+
+@if $generate-grids == true {
+
+    // *
+    // * Our regular, non-responsive width classes.
+
+    @include generate-width-classes();
+
+
+    // *
+    //  * Our responsive classes, if we have enabled them.
+
+    @each $name in $breakpoint-has-widths {
+        @include grid-media-query($name) {
+            @include generate-width-classes('#{$name}--');
+        }
+    }
+}

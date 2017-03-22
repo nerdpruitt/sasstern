@@ -1,0 +1,20 @@
+//
+//   @bdrs
+// --------------------------------------------------------
+//
+//  Function used to make shortcut functions to your maps
+//  Will go after a sublayer map withing a map if needed
+//
+//  @function bdrs($b, $b-sublayer: 'base', $b-map: $border-radius) {
+//      @return getMap($b, $b-sublayer, $b-map);
+//  }
+//
+// --------------------------------------------------------
+
+@function getMap($m, $sublayer: null, $map: null){
+    @if type-of(map-get($map, $m)) == 'map' {
+        @return map-get(map-get($map, $m), $sublayer);
+    } @else {
+        @return map-get($map, $m);
+    }
+}

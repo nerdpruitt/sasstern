@@ -1,0 +1,171 @@
+// --------------------------------------------------------
+//  SAMPLE SETTINGS FILE
+// --------------------------------------------------------
+
+
+// --------------------------------------------------------
+//
+//  Breakpoints
+//
+//  Should always be based off of a 16px base
+//
+// --------------------------------------------------------
+
+$breakpoints: (
+    'xl'                : em(1280, 16),
+    'l'                 : em(960, 16),
+    'm'                 : em(769, 16),
+    's'                 : em(481, 16)
+);
+
+
+// --------------------------------------------------------
+//
+//  Spacing
+//
+//  There is a function to return these values quickly.
+//  Ex: margin-bottom: space('s');
+//
+// --------------------------------------------------------
+
+$s : 8;
+
+$space: (
+    'xs'  : rem($s),
+    's'   : rem($s * 2),
+    'm'   : rem($s * 3),
+    'l'   : rem($s * 4),
+    'xl'  : rem($s * 5),
+    'xxl' : rem($s * 6)
+);
+
+
+// --------------------------------------------------------
+//
+//  Grid Settings
+//
+//  These variables are explained in greater detail in
+//  _mixins/_grids.scss. If you don't need the grids
+//  set $generate-grids to false.
+//
+// --------------------------------------------------------
+
+$generate-grids:     true;
+$gutter:             rem(24);
+$flexbox-fallback:   false;
+
+$use-silent-classes: false;
+$push:               false;
+$pull:               false;
+
+$grid-breakpoints: (
+    's'  query('s'),
+    'm'  query('m'),
+    'l'  query('l'),
+    'xl' query('xl')
+);
+
+$breakpoint-has-widths: ('s', 'm', 'l', 'xl');
+
+
+// --------------------------------------------------------
+//
+//  Border Radius
+//
+//  There is a function to return these values quickly.
+//  Ex: border-radius: bdrs('s');
+//
+// --------------------------------------------------------
+
+$border-radius: (
+    's'  : 2px,
+    'm'  : 4px,
+    'l'  : 6px,
+    'xl' : 8px
+);
+
+
+// --------------------------------------------------------
+//
+//  Colors
+//
+//  There is a function to return these values quickly.
+//  Ex: color('aqua')
+//
+// --------------------------------------------------------
+
+$colors: (
+    // Brand
+    'red': (
+        'base' : #9C0D09
+    ),
+
+    'light-blue': (
+        'base' : #2F82B4
+    ),
+
+    'blue': (
+        'base': #005696
+    ),
+
+    // UI States
+    'green':    (
+                    'base'    : #328F29,
+                    'light'   : #3BA831,
+                    'lightest': #C6D5B7,
+                    'dark'    : #216729
+                ),
+
+    // Grayscale
+    'white'     : #fff,
+    'silver'    : #ddd,
+    'gray':     (
+                    'base'    : #aaa,
+                    'light'   : #F2F2F2,
+                    'lightest': #F7F7F7,
+                    'med'     : #ccc,
+                    'dark'    : #888,
+                    'darkest' : #444
+                ),
+    'black'     : #121921,
+);
+
+
+// --------------------------------------------------------
+//
+//  Color Roles
+//
+// --------------------------------------------------------
+
+$primary-action   : color('blue');
+$secondary-action : color('light-blue');
+
+$branding : color('red');
+
+$body-color : color('white');
+$text-color : color('black');
+
+$placeholder-txt : color('gray', 'light');
+
+
+// --------------------------------------------------------
+//
+//  Z-Index
+//
+//  There is a function to return these values quickly.
+//  Ex: zindex('modal')
+//
+// --------------------------------------------------------
+
+$zindex: (
+    'base'      : 100,
+    'modal'     : 900,
+    'overlay'   : 800,
+    'dropdown'  : 700,
+    'header':   (
+                   'base'  : 600,
+                   'mid'   : 650,
+                   'high'  : 690
+                ),
+    'footer'    : 500
+);

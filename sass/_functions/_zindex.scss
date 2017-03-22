@@ -1,0 +1,11 @@
+//
+//   @zindex
+// --------------------------------------------------------
+//
+//  Shortcut function to grab the map $zindex.
+//
+// --------------------------------------------------------
+
+@function zindex($z, $z-sublayer: 'base', $z-map: $zindex) {
+    @return getMap($z, $z-sublayer, $z-map);
+}
