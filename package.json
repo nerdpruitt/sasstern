@@ -1,6 +1,6 @@
 {
   "name": "sasstern",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A small mixin and function library for Sass.",
   "author": "Nick Pruitt",
   "license": "BSD-3-Clause",
